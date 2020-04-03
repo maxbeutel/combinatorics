@@ -5,6 +5,7 @@
 (define (flatmap proc L)
   (foldr (lambda (i tmp)
            (append tmp (proc i))) '() L))
+
 (define (permutations L)
   (if (null? L)
       '(())
