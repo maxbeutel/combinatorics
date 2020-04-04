@@ -2,6 +2,8 @@
 
 (require rackunit)
 
+;; Utility functions
+
 (define (flatmap proc L)
   (foldr (lambda (i tmp)
            (append tmp (proc i))) '() L))
@@ -20,8 +22,6 @@
                  (map (lambda (seq) (cons i seq))
                       (sequences (- length 1) from))) from)))
 
-;;;;;;;;;;;;;;
-
 (check-equal? (permutations '()) '(()))
 
 (check-equal? (permutations '(1 2 3)) '((3 2 1) (3 1 2) (2 3 1) (2 1 3) (1 3 2) (1 2 3)))
@@ -35,7 +35,7 @@
 
 (define first-digit-is-even (filter (lambda (p) (even? (car p))) perms))
 
-(check-equal? (length first-digit-is-even) 2160) ;; the answer
+(check-equal? (length first-digit-is-even) 2160) ;; The answer
 
 ;; (2)
 ;; How many ways are there to permute elements of the multiset
@@ -55,7 +55,7 @@
 
 (check-equal? first-digit-equals-last-uniq 720) ;; unique count
 
-(check-equal? (- total-uniq first-digit-equals-last-uniq) 9360) ;; the answer
+(check-equal? (- total-uniq first-digit-equals-last-uniq) 9360) ;; The answer
 
 ;;;;;;;;;;; Quick Check, p. 50
 
@@ -72,7 +72,7 @@
 
 (define six-digit-first-last-same (filter (lambda (n) (= (car n) (last n))) six-digit-pos-int))
 
-(check-equal? (length six-digit-first-last-same) 90000) ;; the answer
+(check-equal? (length six-digit-first-last-same) 90000) ;; The answer
 
 ;; (2)
 ;; How many six-digit positive integers are there in which the first and last digits are of the same parity?
@@ -84,4 +84,26 @@
 
 (define six-digit-first-last-same-parity (filter parity-filter six-digit-pos-int))
 
-(check-equal? (length six-digit-first-last-same-parity) 450000) ;; the answer
+(check-equal? (length six-digit-first-last-same-parity) 450000) ;; The answer
+
+;;;;;;;;;;;;;;;;;;;;;
+
+;; (3)
+;; How many functions f : [n] -> [n] are there for which there exists exactly one i element of [n] satisfying f(i) = i?
+
+(define (count-self-mapped-items func)
+  (define (iter current-func to)
+    (cond ((null? current-func) 0)
+          ((= (car current-func) to) (+ 1 (iter (cdr current-func) (+ 1 to))))
+          (else (+ 0 (iter (cdr current-func) (+ 1 to))))))
+  (iter func 1))
+
+(check-equal? (count-self-mapped-items '(1 2 3)) 3)
+
+(check-equal? (count-self-mapped-items '(3 1 2)) 0)
+
+(check-equal? (count-self-mapped-items '(1 1 1)) 1)
+
+(define all-funcs (sequences 5 '(1 2 3 4 5)))
+
+(check-equal? (length (filter (lambda (f) (= (count-self-mapped-items f) 1)) all-funcs)) 1280) ;; The answer
