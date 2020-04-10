@@ -1,5 +1,11 @@
 #lang racket
 
+;; In this file we use bruteforce to validate answers to the "Quick Check" questions in Miklos Bona's
+;; book "A Walk Through Combinatorics, 4th edition", Chapter 3.
+;;
+;; As there are no answers given in the book, I thought it would be an interesting task to validate
+;; my answers by writing some racket programs.
+
 (require rackunit)
 
 ;; Utility functions
@@ -107,3 +113,44 @@
 (define all-funcs (sequences 5 '(1 2 3 4 5)))
 
 (check-equal? (length (filter (lambda (f) (= (count-self-mapped-items f) 1)) all-funcs)) 1280) ;; The answer
+
+;;;;;;;;;;; Quick Check, p. 53
+
+;; (1)
+;; A company has 20 male and 15 female employees.
+;; How many ways are there to form a committee consisting of four male and three female employees of the company?
+
+(define num-M 2) ;; Number of men in the committee.
+(define num-F 2) ;; Number of women in the committee.
+
+;; i <= 20, then M, > 20 F, total 35.
+(define employees '( 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+                    21 22 23 24 25 26 27 28 29 30 31 32 33 34 35))
+
+(define (is-M? id) (<= id 20))
+
+(define (is-F? id) (> id 20))
+
+(define (permutations-k L k)
+  (if (= k 0) ;; base case: n P 0 = 1, the empty permutation
+      '(())
+      (flatmap (lambda (i)
+             (map (lambda (p) (cons i p))
+                  (permutations-k (remove i L) (- k 1)))) L)))
+
+(define committee-perms (permutations-k employees (+ num-M num-F))) ;; Pick a committee of k from all employees.
+
+(define committee-combs (apply set (map (lambda (p) (sort p <)) committee-perms))) ;; But order doesn't matter, so uniqify
+
+;; Now find all committees that consist of num-M men and num-F women.
+(check-equal? (length (filter (lambda (c) (and (= (length (filter is-M? c)) num-M) (= (length (filter is-F? c)) num-F)))
+                (set->list committee-combs))) 19950) ;; The answer for 2 M and 2 F.
+
+;; Generally, the answer should be equal to:
+;;     20 C num-M * 20 C num-F
+;; For the question in the book, the answer is 2204475, but that's too slow to find via brute-force,
+;; could be optimized using memoization.
+
+;; (2) and (3) are somewhat obvious, for (2) if we assume 40 hours/5 days, we can pick 3 hours out of 40 to be office hours.
+;; That is 40 C 3. For (3), it's the combinations formula vs. the multiset formula. 10 C 5 vs. 10 multi-C 4, because in the
+;; second lottery repetitions are possible, that is, we need to count the possible multi-sets.
