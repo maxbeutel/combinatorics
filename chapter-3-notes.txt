@@ -1,0 +1,35 @@
+(16)
+
+a)
+
+# Observe that they play on each day of a week, that is they play 7 matches with at most 3! = 6 different possible outcomes (as there were no ties.)
+
+
+b)
+
+# The question is, whether there would be enough unique arrangements of 4 players, so that for each of the 35 days there could be a different ranking (arrangement) of A, B, C, D.
+
+# They play for 5 weeks, every day = 35 days.
+
+# If there were no ties, then we have 4! = 24 possible rankings.
+For 24 days we could have unique rankings, that is, all possible arrangements of A, B, C, D without ties.
+
+# For the remaining days, there was no tie for spot 1/2 and no tie for 3/4, but there could've been a tie for spot 2/3.
+The possible choices for the tie spots is 4 C 2 = 6, and the remaining 2 spots 1 and 4 can be choosen in 2 ways.
+In total, for the remaining 35-24 = 11 days, there are 6*2 = 12 possible rankings.
+
+# So in total we could have 36 all different rankings for 35 days, so it is possible that no two days had the same ranking.
+
+c)
+
+# As it is a round-robin match, each player has 3 matches in white and 3 matches in black, for a total of 6 matches per day.
+
+# Each match has 3 outcomes, white wins, black wins, draw.
+Describe the result of a day as a set with 6 elements:
+{ ?, ?, ?, ?, ?, ? }
+For example:
+{ W, B, D, D, W, B }
+Here white wins, black wins, draw, draw, white wins, black wins.
+
+# Consider the total amount of unique outcomes: 3^6 = 729, that is, the total of 6-element sets formed from W, B, D.
+That is, they will play for at most 729 days, after that one of the previous results has to be repeated (so this is the upper bound, 2 years).
